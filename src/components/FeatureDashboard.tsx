@@ -8,7 +8,6 @@ import {
   Wifi,
   CloudSun,
   ShieldCheck,
-  Sparkles,
   MapPin,
   RefreshCw
 } from "lucide-react";
@@ -46,7 +45,7 @@ export default function FeatureDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 10000); // 10s auto-refresh
+    const interval = setInterval(fetchDashboardData, 10000);
     return () => clearInterval(interval);
   }, [selectedCity]);
 
@@ -81,11 +80,11 @@ export default function FeatureDashboard() {
           {t("dashSubtitle")}
         </p>
 
-        {/* AI Insight Banner */}
-        <div className="max-w-4xl mx-auto mb-10 bg-gradient-to-r from-forest-green/40 via-sun-gold/20 to-forest-green/40 border border-sun-gold/40 rounded-xl p-4 flex items-center justify-between text-white shadow-xl backdrop-blur-md">
+        {/* Live Insight Banner */}
+        <div className="max-w-4xl mx-auto mb-10 bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between text-white shadow-xl backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-sun-gold/20 flex items-center justify-center border border-sun-gold">
-              <Sparkles className="w-4 h-4 text-sun-gold animate-pulse" />
+            <div className="w-8 h-8 rounded-full bg-sun-gold/20 flex items-center justify-center border border-sun-gold/30">
+              <Activity className="w-4 h-4 text-sun-gold" />
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-sun-gold tracking-widest block">{t("liveAiInsight")}</span>
@@ -94,7 +93,7 @@ export default function FeatureDashboard() {
           </div>
           <button
             onClick={() => setIsMicrogridModalOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 text-xs bg-sun-gold text-bg-deep font-bold px-3.5 py-2 rounded-lg hover:brightness-110 transition-all shadow-md"
+            className="hidden sm:flex items-center gap-1.5 text-xs bg-sun-gold text-bg-deep font-bold px-3.5 py-2 rounded-lg hover:brightness-110 transition-all shadow-sm"
           >
             Microgrid Tool
           </button>
@@ -117,7 +116,7 @@ export default function FeatureDashboard() {
                   </select>
                 </div>
                 <span className="text-white/50 font-[family-name:var(--font-mono)] text-xs flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-surplus-green animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-surplus-green animate-pulse" />
                   LIVE {data?.lastUpdated || "14:32 PKT"}
                 </span>
               </div>

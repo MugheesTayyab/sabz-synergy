@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Sun, Sparkles, RefreshCw, Trash2, MapPin } from "lucide-react";
+import { X, Send, Sun, RefreshCw, Trash2, MapPin, MessageSquare } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 interface ChatMessage {
@@ -26,7 +26,7 @@ export default function ChatPanel() {
           role: "assistant",
           content: language === 'ur'
             ? `السلام علیکم! میں آپ کا سبز ساتھی ہوں۔ میں ${selectedCity} (${selectedProvince}) میں آپ کے گھر، فارم یا فیکٹری کے لیے سولر، نیپرا نیٹ میٹرنگ، اور میزان بینک اسلامی فائنانسنگ کی مکمل رہنمائی فراہم کرنے کے لیے حاضر ہوں۔`
-            : `Assalam-o-Alaikum! I am Sabz Saathi, your AI Energy Consultant for **${selectedCity}, ${selectedProvince}**. Ask me about solar system sizing, NEPRA net metering rates, Meezan Bank Islamic financing, or battery storage!`
+            : `Assalam-o-Alaikum! I am Sabz Saathi, your Energy Consultant for **${selectedCity}, ${selectedProvince}**. Ask me about solar system sizing, NEPRA net metering rates, Meezan Bank Islamic financing, or battery storage!`
         }
       ]);
     }
@@ -105,7 +105,6 @@ export default function ChatPanel() {
 
           const chunk = decoder.decode(value, { stream: true });
 
-          // Try parsing JSON or SSE stream lines
           if (chunk.trim().startsWith("{") && chunk.trim().endsWith("}")) {
             try {
               const parsed = JSON.parse(chunk.trim());
@@ -147,7 +146,7 @@ export default function ChatPanel() {
                 ? {
                     ...msg,
                     content: language === 'ur'
-                      ? "میرا سبز AI انرجی اسسٹنٹ آپ کی مدد کے لیے تیار ہے۔ آپ کا سوال موصول ہو گیا ہے۔"
+                      ? "سبز انرجی اسسٹنٹ آپ کی مدد کے لیے تیار ہے۔ آپ کا سوال موصول ہو گیا ہے۔"
                       : "A 10 Marla home in Multan typically requires an **8 kW to 10 kW** solar system (with 10 kWh battery backup) costing **PKR 18 Lakh - 22 Lakh**, saving **PKR 4.5 Lakh/year** with a **4-year payback**."
                   }
                 : msg
@@ -185,7 +184,7 @@ export default function ChatPanel() {
     return text.split('\n').map((line, lineIdx) => {
       const formattedLine = line.split(/(\*\*.*?\*\*)/g).map((part, partIdx) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={partIdx} className="text-sun-gold font-bold">{part.slice(2, -2)}</strong>;
+          return <strong key={partIdx} className="text-sun-gold font-semibold">{part.slice(2, -2)}</strong>;
         }
         return part;
       });
@@ -199,21 +198,20 @@ export default function ChatPanel() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[94vw] sm:w-[440px] h-[620px] max-h-[88vh] bg-bg-deep/95 backdrop-blur-xl border border-sun-gold/40 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-white animate-fade-up">
+    <div className="fixed bottom-6 right-6 z-50 w-[94vw] sm:w-[440px] h-[620px] max-h-[88vh] bg-bg-deep/95 backdrop-blur-xl border border-sun-gold/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-white animate-fade-up">
       {/* Header */}
       <div className="bg-forest-green px-5 py-3.5 border-b border-white/10 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-sun-gold/20 flex items-center justify-center border border-sun-gold/40 shadow-inner">
-            <Sun className="w-5 h-5 text-sun-gold animate-spin-slow" />
+          <div className="w-9 h-9 rounded-full bg-sun-gold/20 flex items-center justify-center border border-sun-gold/30 shadow-inner">
+            <MessageSquare className="w-4 h-4 text-sun-gold" />
           </div>
           <div>
-            <h3 className="font-semibold text-sm text-white flex items-center gap-1.5">
+            <h3 className="font-semibold text-sm text-white">
               Sabz Saathi (سبز ساتھی)
-              <Sparkles className="w-3.5 h-3.5 text-sun-gold animate-pulse" />
             </h3>
             <p className="text-[11px] text-white/70 flex items-center gap-1">
               <MapPin className="w-3 h-3 text-sun-gold" />
-              {selectedCity}, {selectedProvince} • Sabz AI Engine
+              {selectedCity}, {selectedProvince} • Energy Consultant
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Sparkles, Star } from "lucide-react";
+import { Menu, X, Sun, MessageSquare } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function Navbar() {
@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("home"), href: "#home" },
-    { label: `${t("calculator")} ✦`, href: "#calculator", isMain: true },
+    { label: t("calculator"), href: "#calculator" },
     { label: t("features"), href: "#features" },
     { label: t("pricing"), href: "#pricing" },
     { label: t("about"), href: "#about" },
@@ -33,7 +33,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2">
-          <Sun className="w-8 h-8 text-sun-gold animate-spin-slow" />
+          <Sun className="w-8 h-8 text-sun-gold" />
           <span
             className={`font-[family-name:var(--font-display)] text-xl font-bold ${
               scrolled ? "text-text-dark" : "text-white"
@@ -48,14 +48,8 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className={`text-sm font-semibold transition-colors hover:text-sun-gold relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-sun-gold after:transition-all hover:after:w-full ${
-                link.isMain
-                  ? scrolled
-                    ? "text-forest-green font-bold bg-forest-green/10 px-3 py-1 rounded-full border border-forest-green/20"
-                    : "text-sun-gold font-bold bg-sun-gold/20 px-3 py-1 rounded-full border border-sun-gold/40 shadow-sm"
-                  : scrolled
-                  ? "text-text-mid"
-                  : "text-white/80"
+              className={`text-sm font-medium transition-colors hover:text-sun-gold relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-sun-gold after:transition-all hover:after:w-full ${
+                scrolled ? "text-text-mid" : "text-white/80"
               }`}
             >
               {link.label}
@@ -66,9 +60,9 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <button
             onClick={toggleLanguage}
-            className={`text-sm px-3.5 py-1.5 rounded-full border transition-all hover:scale-105 font-medium ${
+            className={`text-sm px-3.5 py-1.5 rounded-full border transition-all font-medium ${
               scrolled
-                ? "border-text-muted text-text-mid hover:border-sun-gold hover:text-forest-green"
+                ? "border-warm-sand text-text-mid hover:border-forest-green hover:text-forest-green"
                 : "border-white/40 text-white/90 hover:border-sun-gold hover:text-sun-gold"
             }`}
           >
@@ -77,10 +71,14 @@ export default function Navbar() {
           
           <button
             onClick={() => setIsChatOpen(true)}
-            className="flex items-center gap-1.5 text-xs bg-sun-gold/20 text-sun-gold border border-sun-gold/40 px-3 py-1.5 rounded-full hover:bg-sun-gold/30 transition-all font-semibold"
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+              scrolled
+                ? "bg-forest-green/10 border-forest-green/30 text-forest-green hover:bg-forest-green/20"
+                : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+            }`}
           >
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            <span>AI Advisor</span>
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Energy Advisor</span>
           </button>
 
           <a
@@ -110,10 +108,9 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-lg font-medium text-text-dark hover:text-forest-green py-2 border-b border-warm-sand flex items-center justify-between"
+              className="text-lg font-medium text-text-dark hover:text-forest-green py-2 border-b border-warm-sand"
             >
-              <span>{link.label}</span>
-              {link.isMain && <Star className="w-4 h-4 text-sun-gold fill-sun-gold" />}
+              {link.label}
             </a>
           ))}
           <button

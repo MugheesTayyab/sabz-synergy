@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ArrowDown, Sparkles, Zap } from "lucide-react";
+import { ChevronDown, ArrowDown, MessageSquare } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function Hero() {
@@ -33,12 +33,6 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-12 items-center w-full">
         <div className="animate-fade-up">
-          {/* Prominent Badge pointing to Calculator Main Section */}
-          <div className="inline-flex items-center gap-2 bg-sun-gold/20 text-sun-gold border border-sun-gold/40 px-3.5 py-1.5 rounded-full text-xs font-bold mb-4 shadow-inner">
-            <Zap className="w-3.5 h-3.5 animate-bounce text-sun-gold" />
-            <span>AI POWERED • SIZING, WEATHER & ISLAMIC FINANCING</span>
-          </div>
-
           <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.75rem,6vw,4.5rem)] font-bold text-white leading-tight">
             {t("heroTitle")}
           </h1>
@@ -53,21 +47,20 @@ export default function Hero() {
             {t("heroDesc")}
           </p>
           <div className="mt-8 flex flex-wrap gap-4 items-center">
-            {/* Primary CTA pointing directly down to Calculator */}
             <a
               href="#calculator"
-              className="bg-sun-gold text-bg-deep font-bold px-7 py-3.5 rounded-xl hover:brightness-110 transition-all hover:scale-105 text-[15px] shadow-xl flex items-center gap-2 group"
+              className="bg-sun-gold text-bg-deep font-bold px-7 py-3.5 rounded-lg hover:brightness-110 transition-all hover:scale-[1.02] text-[15px] shadow-lg flex items-center gap-2 group"
             >
-              <span>Try 3-Min AI Sizer</span>
-              <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+              <span>Design Your System</span>
+              <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
             </a>
 
             <button
               onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-xl hover:border-sun-gold transition-colors text-[15px] bg-white/5 backdrop-blur-sm"
+              className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-lg hover:border-sun-gold transition-colors text-[15px] bg-white/5 backdrop-blur-sm"
             >
-              <Sparkles className="w-4 h-4 text-sun-gold" />
-              Ask AI Consultant
+              <MessageSquare className="w-4 h-4 text-sun-gold" />
+              Talk to Energy Advisor
             </button>
           </div>
         </div>
@@ -142,9 +135,9 @@ export default function Hero() {
 
       <a
         href="#calculator"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70 hover:text-sun-gold transition-colors text-xs font-semibold animate-bounce"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70 hover:text-sun-gold transition-colors text-xs font-medium"
       >
-        <span>Scroll to AI Sizer</span>
+        <span>Scroll to Calculator</span>
         <ChevronDown className="w-5 h-5" />
       </a>
     </section>

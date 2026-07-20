@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Printer, Download, Sparkles, CheckCircle2 } from "lucide-react";
+import { X, Printer, FileText, CheckCircle2 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function ReportModal() {
@@ -55,7 +55,7 @@ export default function ReportModal() {
         {/* Header */}
         <div className="bg-forest-green px-6 py-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-sun-gold" />
+            <FileText className="w-5 h-5 text-sun-gold" />
             <h3 className="font-semibold text-lg">Bankable Feasibility Report Generator</h3>
           </div>
           <button
@@ -75,7 +75,7 @@ export default function ReportModal() {
               </div>
               <h4 className="font-bold text-xl text-text-dark">Ready to Generate Official Feasibility Document</h4>
               <p className="text-text-muted text-sm max-w-md mx-auto">
-                Your report includes NEPRA tariff breakdown, Meezan Bank Islamic financing schedule, 25-year cash flows, and AI executive summary for {selectedCity}.
+                Your report includes NEPRA tariff breakdown, Meezan Bank Islamic financing schedule, 25-year cash flows, and executive summary for {selectedCity}.
               </p>
               <button
                 onClick={generateReport}
