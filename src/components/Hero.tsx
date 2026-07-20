@@ -51,13 +51,13 @@ export default function Hero() {
               href="#calculator"
               className="bg-sun-gold text-bg-deep font-bold px-7 py-3.5 rounded-lg hover:brightness-110 transition-all hover:scale-[1.02] text-[15px] shadow-lg flex items-center gap-2 group"
             >
-              <span>Design Your System</span>
+              <span>Calculate Your System</span>
               <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
             </a>
 
             <button
               onClick={() => setIsChatOpen(true)}
-              className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-lg hover:border-sun-gold transition-colors text-[15px] bg-white/5 backdrop-blur-sm"
+              className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-lg hover:border-sun-gold transition-colors text-[15px] bg-white/5 backdrop-blur-sm font-medium"
             >
               <MessageSquare className="w-4 h-4 text-sun-gold" />
               Talk to Energy Advisor
@@ -137,7 +137,7 @@ export default function Hero() {
         href="#calculator"
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70 hover:text-sun-gold transition-colors text-xs font-medium"
       >
-        <span>Scroll to Calculator</span>
+        <span>Jump to Solar Calculator</span>
         <ChevronDown className="w-5 h-5" />
       </a>
     </section>

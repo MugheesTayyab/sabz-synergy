@@ -69,8 +69,15 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" className="py-24 px-6 bg-off-white relative overflow-hidden">
+    <section id="calculator" className="py-24 px-6 bg-off-white relative overflow-hidden scroll-mt-12">
       <div className="max-w-3xl mx-auto relative z-10">
+        {/* Professional Clean Section Tag */}
+        <div className="text-center mb-2">
+          <span className="text-xs font-bold tracking-widest uppercase text-forest-green bg-forest-green/10 px-4 py-1.5 rounded-full border border-forest-green/20 inline-block">
+            Core Engine • Solar Sizing & Financial Calculator
+          </span>
+        </div>
+
         <h2 className="font-[family-name:var(--font-display)] text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-text-dark text-center mb-3">
           {t("calcTitle")}
         </h2>
@@ -85,7 +92,7 @@ export default function Calculator() {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                   step >= s
-                    ? "bg-forest-green text-white"
+                    ? "bg-forest-green text-white shadow-md"
                     : "bg-warm-sand text-text-muted"
                 }`}
               >
@@ -103,7 +110,7 @@ export default function Calculator() {
         </div>
 
         {!showResult ? (
-          <div className="bg-card-surface rounded-2xl p-8 sm:p-10 shadow-lg border border-sun-gold/10">
+          <div className="bg-card-surface rounded-2xl p-8 sm:p-10 shadow-xl border border-warm-sand/80">
             {step === 1 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-forest-green mb-4">
