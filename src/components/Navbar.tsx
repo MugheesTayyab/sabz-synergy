@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Sparkles } from "lucide-react";
+import { Menu, X, Sun, Sparkles, Star } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function Navbar() {
@@ -11,8 +11,8 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("home"), href: "#home" },
+    { label: `${t("calculator")} ✦`, href: "#calculator", isMain: true },
     { label: t("features"), href: "#features" },
-    { label: t("calculator"), href: "#calculator" },
     { label: t("pricing"), href: "#pricing" },
     { label: t("about"), href: "#about" },
   ];
@@ -48,8 +48,14 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-sun-gold relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-sun-gold after:transition-all hover:after:w-full ${
-                scrolled ? "text-text-mid" : "text-white/80"
+              className={`text-sm font-semibold transition-colors hover:text-sun-gold relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-sun-gold after:transition-all hover:after:w-full ${
+                link.isMain
+                  ? scrolled
+                    ? "text-forest-green font-bold bg-forest-green/10 px-3 py-1 rounded-full border border-forest-green/20"
+                    : "text-sun-gold font-bold bg-sun-gold/20 px-3 py-1 rounded-full border border-sun-gold/40 shadow-sm"
+                  : scrolled
+                  ? "text-text-mid"
+                  : "text-white/80"
               }`}
             >
               {link.label}
@@ -71,7 +77,7 @@ export default function Navbar() {
           
           <button
             onClick={() => setIsChatOpen(true)}
-            className="flex items-center gap-1.5 text-xs bg-sun-gold/20 text-sun-gold border border-sun-gold/40 px-3 py-1.5 rounded-full hover:bg-sun-gold/30 transition-all"
+            className="flex items-center gap-1.5 text-xs bg-sun-gold/20 text-sun-gold border border-sun-gold/40 px-3 py-1.5 rounded-full hover:bg-sun-gold/30 transition-all font-semibold"
           >
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
             <span>AI Advisor</span>
@@ -104,9 +110,10 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-lg font-medium text-text-dark hover:text-forest-green py-2 border-b border-warm-sand"
+              className="text-lg font-medium text-text-dark hover:text-forest-green py-2 border-b border-warm-sand flex items-center justify-between"
             >
-              {link.label}
+              <span>{link.label}</span>
+              {link.isMain && <Star className="w-4 h-4 text-sun-gold fill-sun-gold" />}
             </a>
           ))}
           <button

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Zap, Wallet, ArrowRight, Leaf, Sparkles, FileText, Check } from "lucide-react";
+import { MapPin, Zap, Wallet, ArrowRight, Leaf, Sparkles, FileText, Check, Star } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { PAKISTAN_CITIES } from "@/lib/pakistan-data";
 import { formatPKR } from "@/lib/formatters";
@@ -22,7 +22,6 @@ export default function Calculator() {
   const [financeData, setFinanceData] = useState<any>(null);
   const [activeFinanceTab, setActiveFinanceTab] = useState<'musharakah' | 'conventional'>('musharakah');
 
-  // Filter cities by province
   const availableCities = Object.values(PAKISTAN_CITIES).filter(
     (c) => !selectedProvince || c.province === selectedProvince
   );
@@ -48,7 +47,6 @@ export default function Calculator() {
         setResultData(data);
         setSizingResult(data);
 
-        // Fetch Financial comparison
         const finRes = await fetch("/api/agents/financial", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -71,22 +69,34 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" className="py-24 px-6 bg-off-white">
-      <div className="max-w-3xl mx-auto">
+    <section id="calculator" className="py-24 px-6 bg-off-white relative overflow-hidden">
+      {/* Background Decorative Gradient Circle */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sun-gold/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-3xl mx-auto relative z-10">
+        {/* Main Section Highlighting Badge */}
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex items-center gap-2 bg-forest-green text-white text-xs font-bold px-4 py-1.5 rounded-full border border-sun-gold/40 shadow-md animate-pulse">
+            <Star className="w-3.5 h-3.5 text-sun-gold fill-sun-gold" />
+            <span>CORE ENGINE • PAKISTAN'S #1 AI SOLAR SIZER</span>
+          </div>
+        </div>
+
         <h2 className="font-[family-name:var(--font-display)] text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-text-dark text-center mb-3">
           {t("calcTitle")}
         </h2>
-        <p className="text-text-muted text-center mb-12">
-          {t("calcSubtitle")}
+        <p className="text-text-muted text-center mb-12 max-w-lg mx-auto">
+          {t("calcSubtitle")} — Instant solar capacity, battery backup, and Meezan Bank 0% Riba financing calculation.
         </p>
 
+        {/* Step Indicator */}
         <div className="flex items-center justify-center gap-0 mb-10">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-md ${
                   step >= s
-                    ? "bg-forest-green text-white"
+                    ? "bg-forest-green text-white ring-4 ring-forest-green/20 scale-105"
                     : "bg-warm-sand text-text-muted"
                 }`}
               >
@@ -94,7 +104,7 @@ export default function Calculator() {
               </div>
               {s < 3 && (
                 <div
-                  className={`w-16 h-0.5 ${
+                  className={`w-16 sm:w-20 h-1 transition-all duration-300 ${
                     step > s ? "bg-forest-green" : "bg-warm-sand"
                   }`}
                 />
@@ -104,16 +114,20 @@ export default function Calculator() {
         </div>
 
         {!showResult ? (
-          <div className="bg-card-surface rounded-2xl p-8 shadow-lg border border-sun-gold/10">
+          <div className="bg-card-surface rounded-3xl p-8 sm:p-10 shadow-2xl border-2 border-sun-gold/30 hover:border-sun-gold/50 transition-all duration-300 relative">
+            <div className="absolute -top-3.5 right-8 bg-sun-gold text-bg-deep text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+              Interactive Tool
+            </div>
+
             {step === 1 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-forest-green mb-4">
-                  <MapPin className="w-5 h-5" />
-                  <span className="font-semibold">{t("step1")}</span>
+                  <MapPin className="w-5 h-5 text-sun-gold" />
+                  <span className="font-semibold text-base">{t("step1")}</span>
                 </div>
 
                 <div>
-                  <label className="text-sm text-text-mid block mb-2">{t("province")}</label>
+                  <label className="text-sm text-text-mid block mb-2 font-medium">{t("province")}</label>
                   <select
                     value={selectedProvince}
                     onChange={(e) => {
@@ -121,7 +135,7 @@ export default function Calculator() {
                       const firstCityInProv = Object.values(PAKISTAN_CITIES).find(c => c.province === e.target.value);
                       if (firstCityInProv) setSelectedCity(firstCityInProv.name);
                     }}
-                    className="w-full border border-warm-sand rounded-lg px-4 py-3 text-text-dark bg-off-white focus:ring-2 focus:ring-forest-green focus:border-transparent outline-none"
+                    className="w-full border-2 border-warm-sand rounded-xl px-4 py-3.5 text-text-dark bg-off-white focus:ring-2 focus:ring-forest-green focus:border-forest-green outline-none font-medium shadow-sm transition-all"
                   >
                     {provinces.map((p) => (
                       <option key={p} value={p}>{p}</option>
@@ -130,11 +144,11 @@ export default function Calculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-text-mid block mb-2">{t("city")}</label>
+                  <label className="text-sm text-text-mid block mb-2 font-medium">{t("city")}</label>
                   <select
                     value={selectedCity}
                     onChange={(e) => setSelectedCity(e.target.value)}
-                    className="w-full border border-warm-sand rounded-lg px-4 py-3 text-text-dark bg-off-white focus:ring-2 focus:ring-forest-green focus:border-transparent outline-none"
+                    className="w-full border-2 border-warm-sand rounded-xl px-4 py-3.5 text-text-dark bg-off-white focus:ring-2 focus:ring-forest-green focus:border-forest-green outline-none font-medium shadow-sm transition-all"
                   >
                     {availableCities.map((c) => (
                       <option key={c.name} value={c.name}>
@@ -149,13 +163,13 @@ export default function Calculator() {
             {step === 2 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-forest-green mb-4">
-                  <Zap className="w-5 h-5" />
-                  <span className="font-semibold">{t("step2")}</span>
+                  <Zap className="w-5 h-5 text-sun-gold" />
+                  <span className="font-semibold text-base">{t("step2")}</span>
                 </div>
 
                 <div>
-                  <label className="text-sm text-text-mid block mb-2">
-                    {t("monthlyUsage")}: <span className="font-[family-name:var(--font-mono)] text-text-dark font-bold">{usage} kWh</span>
+                  <label className="text-sm text-text-mid block mb-2 font-medium">
+                    {t("monthlyUsage")}: <span className="font-[family-name:var(--font-mono)] text-text-dark font-bold text-base">{usage} kWh</span>
                   </label>
                   <input
                     type="range"
@@ -164,24 +178,24 @@ export default function Calculator() {
                     step={50}
                     value={usage}
                     onChange={(e) => setUsage(Number(e.target.value))}
-                    className="w-full accent-forest-green cursor-pointer"
+                    className="w-full accent-forest-green cursor-pointer h-2"
                   />
-                  <div className="flex justify-between text-xs text-text-muted mt-1">
+                  <div className="flex justify-between text-xs text-text-muted mt-2">
                     <span>100 kWh (Home)</span>
-                    <span>5,000 kWh (Industrial)</span>
+                    <span>5,000 kWh (Industrial Tubewell)</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm text-text-mid block mb-3">{t("siteType")}</label>
-                  <div className="flex flex-wrap gap-2">
+                  <label className="text-sm text-text-mid block mb-3 font-medium">{t("siteType")}</label>
+                  <div className="flex flex-wrap gap-2.5">
                     {siteTypes.map((tName) => (
                       <button
                         key={tName}
                         onClick={() => setSiteType(tName)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                        className={`px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all ${
                           siteType === tName
-                            ? "bg-forest-green text-white border-forest-green"
+                            ? "bg-forest-green text-white border-forest-green shadow-md scale-105"
                             : "bg-off-white text-text-mid border-warm-sand hover:border-forest-green"
                         }`}
                       >
@@ -196,12 +210,12 @@ export default function Calculator() {
             {step === 3 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-forest-green mb-4">
-                  <Wallet className="w-5 h-5" />
-                  <span className="font-semibold">{t("step3")}</span>
+                  <Wallet className="w-5 h-5 text-sun-gold" />
+                  <span className="font-semibold text-base">{t("step3")}</span>
                 </div>
                 <div>
-                  <label className="text-sm text-text-mid block mb-2">
-                    {t("budget")}: <span className="font-[family-name:var(--font-mono)] text-text-dark font-bold">PKR {budget} Lakh</span>
+                  <label className="text-sm text-text-mid block mb-2 font-medium">
+                    {t("budget")}: <span className="font-[family-name:var(--font-mono)] text-text-dark font-bold text-base">PKR {budget} Lakh</span>
                   </label>
                   <input
                     type="range"
@@ -210,9 +224,9 @@ export default function Calculator() {
                     step={5}
                     value={budget}
                     onChange={(e) => setBudget(Number(e.target.value))}
-                    className="w-full accent-forest-green cursor-pointer"
+                    className="w-full accent-forest-green cursor-pointer h-2"
                   />
-                  <div className="flex justify-between text-xs text-text-muted mt-1">
+                  <div className="flex justify-between text-xs text-text-muted mt-2">
                     <span>PKR 5 Lakh</span>
                     <span>PKR 2 Crore</span>
                   </div>
@@ -220,11 +234,11 @@ export default function Calculator() {
               </div>
             )}
 
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between items-center mt-8 pt-4 border-t border-warm-sand">
               {step > 1 ? (
                 <button
                   onClick={() => setStep(step - 1)}
-                  className="text-text-mid hover:text-text-dark text-sm font-medium"
+                  className="text-text-mid hover:text-text-dark text-sm font-semibold px-2 py-1"
                 >
                   {t("back")}
                 </button>
@@ -232,20 +246,20 @@ export default function Calculator() {
               <button
                 onClick={handleNext}
                 disabled={isLoading}
-                className="bg-forest-green text-white font-semibold px-6 py-2.5 rounded-lg hover:brightness-110 transition-all flex items-center gap-2 text-sm disabled:opacity-70 shadow-md hover:scale-[1.02]"
+                className="bg-forest-green text-white font-bold px-7 py-3.5 rounded-xl hover:brightness-110 transition-all flex items-center gap-2 text-sm disabled:opacity-70 shadow-lg hover:scale-105"
               >
                 {isLoading ? "Calculating via AI..." : step === 3 ? t("calculate") : t("next")}
-                {!isLoading && <ArrowRight className="w-4 h-4" />}
+                {!isLoading && <ArrowRight className="w-4 h-4 text-sun-gold" />}
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-card-surface rounded-2xl p-8 shadow-lg border border-sun-gold/20 animate-fade-up">
+          <div className="bg-card-surface rounded-3xl p-8 shadow-2xl border-2 border-sun-gold/30 animate-fade-up">
             <div className="flex items-center justify-between mb-4 border-b border-warm-sand pb-4">
               <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark">
                 {t("recSystem")} ({resultData?.city}, {resultData?.province})
               </h3>
-              <span className="bg-forest-green/10 text-forest-green text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-forest-green/10 text-forest-green text-xs font-bold px-3 py-1 rounded-full border border-forest-green/20">
                 {resultData?.disco} Net-Metering Enabled
               </span>
             </div>
