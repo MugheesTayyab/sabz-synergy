@@ -10,7 +10,12 @@ export interface OpenRouterOptions {
   stream?: boolean;
 }
 
-const DEFAULT_MODEL = 'google/gemini-2.0-flash-001';
+const DEFAULT_MODELS = [
+  'google/gemini-2.0-flash-001',
+  'meta-llama/llama-3.3-70b-instruct',
+  'openai/gpt-4o-mini',
+  'deepseek/deepseek-chat'
+];
 
 export async function callOpenRouter(
   messages: Message[],
@@ -18,34 +23,48 @@ export async function callOpenRouter(
 ): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not set in environment variables.');
+    throw new Error('OPENROUTER_API_KEY is missing in environment variables.');
   }
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'HTTP-Referer': 'https://sabz-synergy.vercel.app',
-      'X-Title': 'Sabz Synergy Energy Intelligence Platform',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: options.model || DEFAULT_MODEL,
-      messages,
-      temperature: options.temperature ?? 0.7,
-      max_tokens: options.max_tokens ?? 2048,
-      stream: false,
-    }),
-  });
+  const modelsToTry = options.model ? [options.model, ...DEFAULT_MODELS] : DEFAULT_MODELS;
+  let lastError = '';
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('OpenRouter Error:', errorText);
-    throw new Error(`OpenRouter API Error (${response.status}): ${errorText}`);
+  for (const model of modelsToTry) {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': 'https://sabz-synergy.vercel.app',
+          'X-Title': 'Sabz Synergy Energy Intelligence Platform',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: options.temperature ?? 0.7,
+          max_tokens: options.max_tokens ?? 1500,
+          stream: false,
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.warn(`OpenRouter model ${model} failed (${response.status}): ${errText}`);
+        lastError = errText;
+        continue;
+      }
+
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content;
+      if (text) return text;
+    } catch (err: any) {
+      console.warn(`OpenRouter model ${model} fetch exception:`, err);
+      lastError = err?.message || String(err);
+    }
   }
 
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || '';
+  throw new Error(`All OpenRouter AI models failed. Last error: ${lastError}`);
 }
 
 export async function streamOpenRouter(
@@ -54,8 +73,10 @@ export async function streamOpenRouter(
 ): Promise<Response> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not set in environment variables.');
+    throw new Error('OPENROUTER_API_KEY is missing in environment variables.');
   }
+
+  const model = options.model || DEFAULT_MODELS[0];
 
   return fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
@@ -66,10 +87,10 @@ export async function streamOpenRouter(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: options.model || DEFAULT_MODEL,
+      model,
       messages,
       temperature: options.temperature ?? 0.7,
-      max_tokens: options.max_tokens ?? 2048,
+      max_tokens: options.max_tokens ?? 1500,
       stream: true,
     }),
   });
