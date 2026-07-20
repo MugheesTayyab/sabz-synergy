@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Activity,
   Sun,
@@ -7,7 +8,13 @@ import {
   Wifi,
   CloudSun,
   ShieldCheck,
+  Sparkles,
+  MapPin,
+  RefreshCw
 } from "lucide-react";
+import { useApp } from "@/context/AppContext";
+import { formatPKR } from "@/lib/formatters";
+import { PAKISTAN_CITIES } from "@/lib/pakistan-data";
 
 const features = [
   { icon: Activity, text: "Real-time surplus / shortfall calculation" },
@@ -18,14 +25,38 @@ const features = [
   { icon: ShieldCheck, text: "Carbon reduction certificate" },
 ];
 
-const tiles = [
-  { label: "Today's Usage", value: "180 kWh", trend: "↑ 8%" },
-  { label: "Solar Generated", value: "145 kWh", trend: "82% cap" },
-  { label: "Battery Level", value: "72%", trend: "" },
-  { label: "Grid Status", value: "OFFLINE", trend: "Since 2PM" },
-];
-
 export default function FeatureDashboard() {
+  const { t, selectedCity, setSelectedCity, setIsMicrogridModalOpen } = useApp();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchDashboardData = async () => {
+    try {
+      const res = await fetch(`/api/agents/dashboard?city=${encodeURIComponent(selectedCity)}&siteType=Farm&systemKW=18`);
+      if (res.ok) {
+        const json = await res.json();
+        setData(json);
+      }
+    } catch (e) {
+      console.error("Dashboard fetch error:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 10000); // 10s auto-refresh
+    return () => clearInterval(interval);
+  }, [selectedCity]);
+
+  const tiles = [
+    { label: t("todaysUsage"), value: `${data?.todaysUsageKWh || 180} kWh`, trend: "Live Load" },
+    { label: t("solarGenerated"), value: `${data?.todaysSolarKWh || 145} kWh`, trend: `${data?.currentSolarProductionKW || 12.4} kW active` },
+    { label: t("batteryLevel"), value: `${data?.batterySOC || 78}%`, trend: "Lithium Storage" },
+    { label: t("gridStatus"), value: data?.gridStatus || "OFFLINE", trend: data?.gridStatus === "OFFLINE" ? "Since 2PM" : "Grid Synchronized" },
+  ];
+
   return (
     <section id="features" className="py-24 px-6 relative overflow-hidden" style={{ background: "#0B1E14" }}>
       <div className="absolute inset-0 opacity-[0.03]">
@@ -44,56 +75,91 @@ export default function FeatureDashboard() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <h2 className="font-[family-name:var(--font-display)] text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-white text-center mb-3">
-          Your Farm&apos;s Energy Brain
+          {t("dashTitle")}
         </h2>
-        <p className="text-white/60 text-center mb-14 max-w-lg mx-auto">
-          Live, Predicted, Optimized — see exactly what&apos;s happening now and
-          what&apos;s coming tomorrow.
+        <p className="text-white/60 text-center mb-10 max-w-lg mx-auto">
+          {t("dashSubtitle")}
         </p>
+
+        {/* AI Insight Banner */}
+        <div className="max-w-4xl mx-auto mb-10 bg-gradient-to-r from-forest-green/40 via-sun-gold/20 to-forest-green/40 border border-sun-gold/40 rounded-xl p-4 flex items-center justify-between text-white shadow-xl backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-sun-gold/20 flex items-center justify-center border border-sun-gold">
+              <Sparkles className="w-4 h-4 text-sun-gold animate-pulse" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold text-sun-gold tracking-widest block">{t("liveAiInsight")}</span>
+              <p className="text-sm font-medium text-white/95">{data?.aiInsight || "Analyzing regional irradiance & weather..."}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsMicrogridModalOpen(true)}
+            className="hidden sm:flex items-center gap-1.5 text-xs bg-sun-gold text-bg-deep font-bold px-3.5 py-2 rounded-lg hover:brightness-110 transition-all shadow-md"
+          >
+            Microgrid Tool
+          </button>
+        </div>
 
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
-            <div className="bg-bg-card rounded-2xl border border-bg-border p-6">
+            <div className="bg-bg-card rounded-2xl border border-bg-border p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-5 text-sm">
-                <span className="text-white/80 font-medium">
-                  Ali Farm — Sheikhupura
-                </span>
-                <span className="text-white/40 font-[family-name:var(--font-mono)] text-xs">
-                  LIVE 14:32 PKT
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-sun-gold" />
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    className="bg-bg-deep border border-sun-gold/30 text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-sun-gold"
+                  >
+                    {Object.keys(PAKISTAN_CITIES).map((cName) => (
+                      <option key={cName} value={cName}>{cName} ({PAKISTAN_CITIES[cName].province})</option>
+                    ))}
+                  </select>
+                </div>
+                <span className="text-white/50 font-[family-name:var(--font-mono)] text-xs flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-surplus-green animate-ping" />
+                  LIVE {data?.lastUpdated || "14:32 PKT"}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                {tiles.map((t) => (
+                {tiles.map((tItem) => (
                   <div
-                    key={t.label}
+                    key={tItem.label}
                     className="bg-bg-deep rounded-xl p-4 border-t-2 border-sun-gold/50"
                   >
-                    <p className="text-white/50 text-xs mb-1">{t.label}</p>
+                    <p className="text-white/50 text-xs mb-1">{tItem.label}</p>
                     <p
                       className={`font-[family-name:var(--font-mono)] text-lg font-medium ${
-                        t.label === "Grid Status"
-                          ? "text-deficit-red"
+                        tItem.label === t("gridStatus") && tItem.value === "OFFLINE"
+                          ? "text-deficit-red font-bold"
                           : "text-white"
                       }`}
                     >
-                      {t.value}
+                      {tItem.value}
                     </p>
-                    {t.trend && (
+                    {tItem.trend && (
                       <p className="text-white/30 text-[11px] mt-0.5">
-                        {t.trend}
+                        {tItem.trend}
                       </p>
                     )}
                   </div>
                 ))}
               </div>
 
+              {/* Dynamic 7-Day Chart */}
               <div className="bg-bg-deep rounded-xl p-5">
-                <p className="text-white/60 text-xs mb-4">
-                  Energy Balance — Last 7 Days + Forecast
-                </p>
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-white/60 text-xs">
+                    Energy Balance — 7 Days + 3-Day Weather Forecast ({selectedCity})
+                  </p>
+                  <button onClick={fetchDashboardData} className="text-white/40 hover:text-sun-gold transition-colors">
+                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
+
                 <div className="h-40 flex items-end gap-2">
-                  {[
+                  {(data?.chartData || [
                     { solar: 65, usage: 50 },
                     { solar: 80, usage: 60 },
                     { solar: 55, usage: 70 },
@@ -104,41 +170,50 @@ export default function FeatureDashboard() {
                     { solar: 60, usage: 55, forecast: true },
                     { solar: 50, usage: 65, forecast: true },
                     { solar: 45, usage: 60, forecast: true },
-                  ].map((d, i) => (
+                  ]).map((d: any, i: number) => (
                     <div key={i} className="flex-1 flex gap-0.5 items-end h-full">
                       <div
-                        className={`flex-1 rounded-t-sm ${
-                          d.forecast ? "bg-sun-gold/30 border border-dashed border-sun-gold/40" : "bg-sun-gold/70"
+                        className={`flex-1 rounded-t-sm transition-all duration-500 ${
+                          d.forecast ? "bg-sun-gold/30 border border-dashed border-sun-gold/40" : "bg-sun-gold/70 hover:bg-sun-gold"
                         }`}
-                        style={{ height: `${d.solar}%` }}
+                        style={{ height: `${Math.min(100, d.solar)}%` }}
+                        title={`Solar: ${d.solar}`}
                       />
                       <div
-                        className={`flex-1 rounded-t-sm ${
-                          d.forecast ? "bg-sky-teal/30 border border-dashed border-sky-teal/40" : "bg-sky-teal/70"
+                        className={`flex-1 rounded-t-sm transition-all duration-500 ${
+                          d.forecast ? "bg-sky-teal/30 border border-dashed border-sky-teal/40" : "bg-sky-teal/70 hover:bg-sky-teal"
                         }`}
-                        style={{ height: `${d.usage}%` }}
+                        style={{ height: `${Math.min(100, d.usage)}%` }}
+                        title={`Usage: ${d.usage}`}
                       />
                     </div>
                   ))}
                 </div>
+
                 <div className="flex gap-4 mt-3">
                   <span className="flex items-center gap-1 text-[10px] text-white/50">
-                    <span className="w-3 h-2 bg-sun-gold/70 rounded-sm" /> Solar
+                    <span className="w-3 h-2 bg-sun-gold/70 rounded-sm" /> Solar Generation
                   </span>
                   <span className="flex items-center gap-1 text-[10px] text-white/50">
-                    <span className="w-3 h-2 bg-sky-teal/70 rounded-sm" /> Usage
+                    <span className="w-3 h-2 bg-sky-teal/70 rounded-sm" /> Energy Load
                   </span>
                   <span className="flex items-center gap-1 text-[10px] text-white/50">
-                    <span className="w-3 h-2 border border-dashed border-white/30 rounded-sm" /> Forecast
+                    <span className="w-3 h-2 border border-dashed border-white/30 rounded-sm" /> 72h Open-Meteo Forecast
                   </span>
                 </div>
               </div>
 
-              <div className="mt-5 bg-bg-deep rounded-xl p-4">
-                <p className="text-white/60 text-xs mb-3">PKR Savings This Month</p>
-                <p className="font-[family-name:var(--font-mono)] text-3xl text-surplus-green font-bold">
-                  PKR 42,800
-                </p>
+              <div className="mt-5 bg-bg-deep rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-white/60 text-xs mb-1">{t("pkrSavingsMonth")}</p>
+                  <p className="font-[family-name:var(--font-mono)] text-3xl text-surplus-green font-bold">
+                    {formatPKR(data?.monthSavingsPKR || 42800)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-white/40 text-[11px]">DISCO Utility Rate</p>
+                  <p className="text-sun-gold text-xs font-semibold">{data?.disco || "LESCO"} Slabs</p>
+                </div>
               </div>
             </div>
           </div>

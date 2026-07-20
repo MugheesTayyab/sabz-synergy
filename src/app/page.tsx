@@ -11,6 +11,10 @@ import Testimonials from "@/components/Testimonials";
 import CoverageMap from "@/components/CoverageMap";
 import CTABanner from "@/components/CTABanner";
 import Footer from "@/components/Footer";
+import ChatFAB from "@/components/ChatFAB";
+import ChatPanel from "@/components/ChatPanel";
+import ReportModal from "@/components/ReportModal";
+import MicrogridModal from "@/components/MicrogridModal";
 
 export default function Home() {
   return (
@@ -28,6 +32,12 @@ export default function Home() {
       <CoverageMap />
       <CTABanner />
       <Footer />
+      
+      {/* Agentic AI Components */}
+      <ChatFAB />
+      <ChatPanel />
+      <ReportModal />
+      <MicrogridModal />
     </>
   );
 }

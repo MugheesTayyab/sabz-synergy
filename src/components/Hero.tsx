@@ -1,8 +1,11 @@
 "use client";
 
-import { ChevronDown, Play } from "lucide-react";
+import { ChevronDown, Play, Sparkles } from "lucide-react";
+import { useApp } from "@/context/AppContext";
 
 export default function Hero() {
+  const { t, setIsChatOpen } = useApp();
+
   return (
     <section
       id="home"
@@ -31,30 +34,31 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-12 items-center w-full">
         <div className="animate-fade-up">
           <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.75rem,6vw,4.5rem)] font-bold text-white leading-tight">
-            Pakistan&apos;s Smartest Energy Companion
+            {t("heroTitle")}
           </h1>
           <p
             className="mt-3 text-sun-gold text-2xl leading-relaxed"
             style={{ fontFamily: "Noto Nastaliq Urdu, serif" }}
             dir="rtl"
           >
-            پاکستان کا سمارٹ توانائی ساتھی
+            {t("heroUrduSub")}
           </p>
           <p className="mt-6 text-white/80 text-[17px] max-w-xl leading-relaxed">
-            Design, monitor, and optimize your solar + battery + wind system.
-            Built for farmers, factories, and communities — in PKR, with local
-            weather data.
+            {t("heroDesc")}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a
               href="#calculator"
-              className="bg-sun-gold text-bg-deep font-semibold px-7 py-3.5 rounded-lg hover:brightness-110 transition-all hover:scale-[1.02] text-[15px]"
+              className="bg-sun-gold text-bg-deep font-semibold px-7 py-3.5 rounded-lg hover:brightness-110 transition-all hover:scale-[1.02] text-[15px] shadow-lg"
             >
-              Start Free Trial
+              {t("startTrial")}
             </a>
-            <button className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-lg hover:border-sun-gold transition-colors text-[15px]">
-              <Play className="w-4 h-4" />
-              Watch Demo
+            <button
+              onClick={() => setIsChatOpen(true)}
+              className="flex items-center gap-2 border border-white/40 text-white px-6 py-3.5 rounded-lg hover:border-sun-gold transition-colors text-[15px] bg-white/5 backdrop-blur-sm"
+            >
+              <Sparkles className="w-4 h-4 text-sun-gold" />
+              Ask AI Consultant
             </button>
           </div>
         </div>
@@ -62,7 +66,7 @@ export default function Hero() {
         <div className="animate-float hidden lg:block">
           <div className="glass-card rounded-2xl p-6 max-w-md ml-auto">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-white/60 text-sm">Live Dashboard Preview</span>
+              <span className="text-white/60 text-sm">{t("livePreview")}</span>
               <span className="w-2 h-2 rounded-full bg-surplus-green animate-pulse" />
             </div>
 
@@ -96,9 +100,9 @@ export default function Hero() {
                 </div>
               </div>
               <div>
-                <p className="text-white text-sm font-medium">Today&apos;s Solar</p>
+                <p className="text-white text-sm font-medium">{t("todaysSolar")}</p>
                 <span className="inline-block mt-1 bg-surplus-green/20 text-surplus-green text-xs px-2 py-0.5 rounded-full">
-                  Surplus +23 kWh
+                  {t("surplus")} +23 kWh
                 </span>
               </div>
             </div>
@@ -120,7 +124,7 @@ export default function Hero() {
             <div className="bg-white/5 rounded-lg p-3 flex items-center gap-2">
               <span className="text-white/40 text-xs">☁️</span>
               <span className="text-white/70 text-xs">
-                Tomorrow: Cloudy — Expect -22% solar
+                Open-Meteo: Clear skies expect +15% solar yield today
               </span>
             </div>
           </div>

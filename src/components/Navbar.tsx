@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, Sun } from "lucide-react";
-
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Features", href: "#features" },
-  { label: "Calculator", href: "#calculator" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
-];
+import { Menu, X, Sun, Sparkles } from "lucide-react";
+import { useApp } from "@/context/AppContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t, language, toggleLanguage, setIsChatOpen } = useApp();
+
+  const navLinks = [
+    { label: t("home"), href: "#home" },
+    { label: t("features"), href: "#features" },
+    { label: t("calculator"), href: "#calculator" },
+    { label: t("pricing"), href: "#pricing" },
+    { label: t("about"), href: "#about" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -31,7 +33,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2">
-          <Sun className="w-8 h-8 text-sun-gold" />
+          <Sun className="w-8 h-8 text-sun-gold animate-spin-slow" />
           <span
             className={`font-[family-name:var(--font-display)] text-xl font-bold ${
               scrolled ? "text-text-dark" : "text-white"
@@ -56,18 +58,30 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${
-            scrolled
-              ? "border-text-muted text-text-mid hover:border-sun-gold"
-              : "border-white/40 text-white/80 hover:border-sun-gold"
-          }`}>
-            اردو / EN
+          <button
+            onClick={toggleLanguage}
+            className={`text-sm px-3.5 py-1.5 rounded-full border transition-all hover:scale-105 font-medium ${
+              scrolled
+                ? "border-text-muted text-text-mid hover:border-sun-gold hover:text-forest-green"
+                : "border-white/40 text-white/90 hover:border-sun-gold hover:text-sun-gold"
+            }`}
+          >
+            {language === 'en' ? 'اردو / EN' : 'EN / اردو'}
           </button>
+          
+          <button
+            onClick={() => setIsChatOpen(true)}
+            className="flex items-center gap-1.5 text-xs bg-sun-gold/20 text-sun-gold border border-sun-gold/40 px-3 py-1.5 rounded-full hover:bg-sun-gold/30 transition-all"
+          >
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+            <span>AI Advisor</span>
+          </button>
+
           <a
             href="#calculator"
             className="bg-forest-green text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:brightness-110 transition-all hover:scale-[1.02]"
           >
-            Get Started
+            {t("getStarted")}
           </a>
         </div>
 
@@ -95,15 +109,18 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <button className="text-sm px-3 py-1.5 rounded-full border border-text-muted text-text-mid w-fit mt-2">
-            اردو / EN
+          <button
+            onClick={toggleLanguage}
+            className="text-sm px-4 py-2 rounded-full border border-text-muted text-text-mid w-fit mt-2 font-medium"
+          >
+            {language === 'en' ? 'اردو / EN' : 'EN / اردو'}
           </button>
           <a
             href="#calculator"
             onClick={() => setMobileOpen(false)}
             className="bg-forest-green text-white text-center font-semibold px-5 py-3 rounded-lg mt-2"
           >
-            Get Started
+            {t("getStarted")}
           </a>
         </div>
       )}
